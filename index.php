@@ -13,7 +13,7 @@ $visites = $pdo->query($sql)->fetchAll();
 <html lang="fr">
 <head>
     <meta charset="utf-8">
-    <title>Projet dev web</title>
+    <title>Projet Dev Web</title>
 </head>
 <body>
     <h1>Fréquentation des lieux culturels</h1>
