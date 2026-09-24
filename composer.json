@@ -1,0 +1,7 @@
+{
+    "name": "etudiant/isoculture",
+    "description": "Projet de développement web - S3",
+    "require": {
+        "php": ">=8.3"
+    }
+}
