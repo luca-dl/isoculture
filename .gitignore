@@ -1,0 +1,13 @@
+# Configuration locale (contient les identifiants de connexion)
+# On liste ici chaque fichier explicitement, plutôt qu'un motif générique comme ".env*", pour
+# que ce soit lisible sans effort par quiconque relit ce .gitignore. Mais ".env*" fonctionne
+# tout aussi bien, et protège même mieux contre l'oubli : il couvre aussi tout futur fichier
+# ".env.xxx" que vous ajouteriez sans penser à revenir compléter cette liste.
+.env
+.env.local
+
+# Base de données de développement
+sql/*.db
+
+# Dépendances installées par Composer
+/vendor/
