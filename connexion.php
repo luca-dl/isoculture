@@ -9,14 +9,8 @@ session_start();
 $erreur = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // On normalise l'e-mail saisi de la même façon que lors de l'inscription.
-    $email = strtolower(trim($_POST['email'] ?? ''));
-
-    // 1. On cherche la ligne de la base qui correspond à cet e-mail.
     $requete = $pdo->prepare("SELECT * FROM php_utilisateurs WHERE email = :email");
-    $requete->bindParam(':email', $email, PDO::PARAM_STR);
-    $requete->execute();
-    // fetch() renvoie la ligne trouvée sous forme de tableau, ou `false` s'il n'y en a pas.
+    $requete->execute([':email' => $_POST['email'] ?? '']);
     $ligne = $requete->fetch(PDO::FETCH_ASSOC);
 
     // 2. On vérifie le mot de passe, seulement si le compte existe.
