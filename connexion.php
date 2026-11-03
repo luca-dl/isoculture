@@ -1,5 +1,6 @@
 <?php
 // connexion.php
+require_once __DIR__ . '/fonctions.php';
 require __DIR__ . '/db.php';
 require_once __DIR__ . '/classes/Utilisateur.php';
 
@@ -63,6 +64,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php if ($erreur !== null): ?>
     <p role="alert">⚠️ <?= htmlspecialchars($erreur, ENT_QUOTES, 'UTF-8') ?></p>
 <?php endif; ?>
+
+<?php
+    // SÉCURISÉ — on échappe les caractères spéciaux
+    if ($erreur !== null) {
+        echo "<p>Échec pour l'adresse : " . e($_POST['email']) . "</p>";
+    }
+?>
 
 <form method="post" action="connexion.php">
     <label for="email">Adresse e-mail</label>
