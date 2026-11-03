@@ -27,7 +27,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($ok) {
         // 3. Connexion réussie : on mémorise l'id dans la session. Tant qu'elle existe,
         //    les autres pages savent que cette personne est connectée.
+        session_regenerate_id(true);   // true = détruit l'ancienne session
         $_SESSION['utilisateur_id'] = $utilisateur->getId();
+
 
         // On note la date de cette connexion (utile pour la durée de conservation).
         $maintenant = date('c');
