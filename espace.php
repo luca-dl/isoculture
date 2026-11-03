@@ -1,6 +1,6 @@
 <?php
-// espace.php
-session_start();   // sans cet appel, $_SESSION est vide : on ne retrouverait pas l'utilisateur
+
+require __DIR__ . '/session.php';
 
 // isset() vérifie qu'une variable existe. Si l'id n'est pas en session, personne n'est connecté.
 if (!isset($_SESSION['utilisateur_id'])) {

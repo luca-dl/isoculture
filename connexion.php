@@ -6,7 +6,7 @@ require_once __DIR__ . '/classes/Utilisateur.php';
 
 // session_start() : active la session PHP. Elle permet de « se souvenir » de l'utilisateur
 // d'une page à l'autre (via $_SESSION). À appeler avant tout affichage.
-session_start();
+require __DIR__ . '/session.php';
 $erreur = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
