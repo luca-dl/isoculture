@@ -3,6 +3,7 @@
 require_once __DIR__ . '/fonctions.php';
 require __DIR__ . '/db.php';
 require_once __DIR__ . '/classes/Utilisateur.php';
+require_once __DIR__ . '/verrouillage.php'; // <-- Modification 1 : inclusion du fichier
 
 // session_start() : active la session PHP. Elle permet de « se souvenir » de l'utilisateur
 // d'une page à l'autre (via $_SESSION). À appeler avant tout affichage.
@@ -10,8 +11,17 @@ require __DIR__ . '/session.php';
 $erreur = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // On extrait l'email dans une variable pour s'en servir plusieurs fois
+    $email = $_POST['email'] ?? '';
+
+    // <-- Modification 1 : vérification du verrouillage AVANT de chercher en base
+    if (est_verrouille($pdo, $email)) {
+        http_response_code(429);                  // 429 : « trop de requêtes »
+        exit("Trop de tentatives. Réessayez dans 15 minutes.");
+    }
+
     $requete = $pdo->prepare("SELECT * FROM php_utilisateurs WHERE email = :email");
-    $requete->execute([':email' => $_POST['email'] ?? '']);
+    $requete->execute([':email' => $email]);
     $ligne = $requete->fetch(PDO::FETCH_ASSOC);
 
     // 2. On vérifie le mot de passe, seulement si le compte existe.
@@ -22,6 +32,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $utilisateur = new Utilisateur($ligne['email'], $ligne['mot_de_passe_hache'], (int) $ligne['id']);
         // C'est la méthode de la classe qui compare : on ne touche jamais au hachage ici.
         $ok = $utilisateur->verifierMotDePasse($_POST['mot_de_passe'] ?? '');
+    } else {
+        // <-- Modification 2 : temps de réponse égalisé si le compte n'existe pas
+        password_verify($_POST['mot_de_passe'] ?? '', HASH_FACTICE);
     }
 
     if ($ok) {
@@ -46,6 +59,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Si on arrive ici : compte inconnu OU mot de passe faux.
+    // <-- Modification 3 : enregistrement de l'échec en base de données
+    enregistrer_echec($pdo, $email);
+    
     // Message identique dans les deux cas : on ne révèle pas quelles adresses existent.
     $erreur = "Adresse e-mail ou mot de passe incorrect.";
     // Le journal dit qu'il y a eu un échec, mais ni qui, ni avec quel mot de passe.
