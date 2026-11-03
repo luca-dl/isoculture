@@ -11,6 +11,7 @@ if (!isset($_SESSION['utilisateur_id'])) {
 $id = (int) $_SESSION['utilisateur_id'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    verifier_csrf();
     $maj = $pdo->prepare("UPDATE php_utilisateurs SET nom_affichage = :nom WHERE id = :id");
     $maj->execute([':nom' => $_POST['nom_affichage'] ?? '', ':id' => $id]);
     header('Location: profil.php');
@@ -28,7 +29,7 @@ $nom = $lecture->fetchColumn();
 <h1>Mon profil</h1>
 <p>Nom affiché : <?= e($nom) ?></p>
 <form method="post">
-    <input type="text" name="nom_affichage">
+    <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
     <button type="submit">Enregistrer</button>
 </form>
 <p><a href="membres.php">Voir les membres</a></p>
